@@ -14,7 +14,7 @@ export, __all__ = strax.exporter()
 __all__ += ['instruction_dtype', 'truth_extra_dtype']
 
 instruction_dtype = [
-    ('event_number', np.int32),
+    ('event_number', np.int64),
     ('type', np.int8),
     ('time', np.int64),
     ('x', np.float32),
@@ -29,7 +29,7 @@ truth_extra_dtype = [
     ('t_first_photon', np.float), ('t_last_photon', np.float),
     ('t_mean_photon', np.float), ('t_sigma_photon', np.float),
     ('t_first_electron', np.float), ('t_last_electron', np.float),
-    ('t_mean_electron', np.float), ('t_sigma_electron', np.float), ('endtime',np.int64)]
+    ('t_mean_electron', np.float), ('t_sigma_electron', np.float), ('endtime',np.int64),]
 
 log = logging.getLogger('SimulationCore')
 
@@ -71,7 +71,8 @@ def read_optical(file, c):
         e = all_ttrees[next(iter(all_ttrees))]
 
     if uproot_ver4:
-        n_events = len(e['eventid'].array(library="np"))
+        eventid = e['eventid'].array(library="np")
+        n_events = len(eventid)
         # lets separate the events in time by a constant time difference
         time = np.arange(1, n_events+1)
 
@@ -80,7 +81,8 @@ def read_optical(file, c):
         yp = e["yp_pri"].array(library="np") / 10
         zp = e["zp_pri"].array(library="np") / 10
     else:
-        n_events = len(e.array('eventid'))
+        eventid = e.array('eventid')
+        n_events = len(eventid)
         # lets separate the events in time by a constant time difference
         time = np.arange(1, n_events+1)
 
@@ -117,7 +119,7 @@ def read_optical(file, c):
         zp.flatten() / 10, \
         1e7 * time.flatten()
 
-    ins['event_number'] = np.arange(n_events)
+    ins['event_number'] = eventid
     ins['type'] = np.repeat(1, n_events)
     ins['recoil'] = np.repeat('er', n_events)
     ins['amp'] = [len(t) for t in timings]
