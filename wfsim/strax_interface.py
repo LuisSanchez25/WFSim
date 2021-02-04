@@ -609,7 +609,8 @@ class ChunkRawRecordsnVeto(ChunkRawRecordsOptical):
             yield dict(raw_records_nv=records,
                        truth=_truth)
         else:
-            yield dict(raw_records_nv=records[records['channel'] < self.config['channels_top_high_energy'][0]],
+            records['channel'] += 2000
+            yield dict(raw_records_nv=records,
                        raw_records_aqmon_nv=records[records['channel']==800],
                        truth=_truth)
         self.record_buffer[:np.sum(~maska)] = self.record_buffer[:self.blevel][~maska]
