@@ -98,6 +98,13 @@ def read_optical(c):
     # cut interactions without electrons or photons
     ins = ins[ins["amp"] > 0]
 
+    # Apply Q. E.
+    if c['neutron_veto']:
+        rand_for_qe = np.random.rand(len(channels))
+        channels = np.array([channel for channel, prob in zip(channels, rand_for_qe) if prob < c['nveto_pmt_qe']])
+        timings = np.array([timing for timing, prob in zip(timings, rand_for_qe) if prob < c['nveto_pmt_qe']])
+        ins = np.array([i for i, prob in zip(ins, rand_for_qe) if prob < c['nveto_pmt_qe']], dtype=instruction_dtype)
+
     return ins, channels, timings
 
 def instruction_from_csv(filename):
@@ -290,7 +297,9 @@ class ChunkRawRecordsOptical(ChunkRawRecords):
                  help="Number of pmts in top array. Provided by context"),
     strax.Option('neutron_veto', default=False, track=True,
                  help="Flag for nVeto optical simulation instead of TPC"),
-    strax.Option('mc_version_above_4', default=True, track=True, 
+    strax.Option('nveto_pmt_qe', default=0.3,
+                 help="Efficiency of Geant4 opticalphoton detected nVeto PMT"),
+    strax.Option('mc_version_above_4', default=True, track=True,
                  help="Flag above MC version 4. to generate optical"),
 )
 class FaxSimulatorPlugin(strax.Plugin):
