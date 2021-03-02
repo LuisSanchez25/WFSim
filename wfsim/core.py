@@ -26,10 +26,11 @@ class NestId():
     ER = [7, 8, 11]
     _ALL = NR+ALPHA+ER
 
+ 
+#Note the infomation that I will add to this document might include things that are common knowledge but will be useful to me as my understanding of python is limited
 @export
 class Pulse(object):
-    """Pulse building class"""
-
+    """Pulse building class""" #this section is the documentation of the function which needs further fleshing out, can be accessed as ClassName.__doc__
     def __init__(self, config):
         self.config = config
         self.config.update(getattr(self.config, self.__class__.__name__, {}))
@@ -400,8 +401,8 @@ class S1(Pulse):
 @export
 class S2(Pulse):
     """
-    Given temperal inputs as well as number of electrons
-    Random generate photon timing and channel distribution.
+    Given temporal inputs as well as number of electrons
+    Randomly generate photon timing and channel distribution.
     """
 
     def __init__(self, config):
@@ -410,8 +411,8 @@ class S2(Pulse):
         #  This config is not set for the 1T fax config
         self.config.setdefault('s2_time_spread', 1)
 
-        self.phase = 'gas'  # To distinguish singlet/triplet time delay.
-        self.luminescence_switch_threshold = 100  # When to use simplified model (NOT IN USE)
+        self.phase = 'gas'  # To distinguish singlet/triplet time delay. This is based on electron spin
+        self.luminescence_switch_threshold = 100  # When to use simplified model (NOT IN USE)?
 
     def __call__(self, instruction):
         if len(instruction.shape) < 1:
